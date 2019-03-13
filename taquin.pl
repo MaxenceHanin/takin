@@ -1,9 +1,9 @@
-:- lib(listut).       % a placer en commentaire si on utilise Swi-Prolog
+/*:- lib(listut).       % a placer en commentaire si on utilise Swi-Prolog
                       % (le predicat delete/3 est predefini)
                       
                       % Indispensable dans le cas de ECLiPSe Prolog
                       % (le predicat delete/3 fait partie de la librairie listut)
-                      
+        */              
 %***************************
 %DESCRIPTION DU JEU DU TAKIN
 %***************************
@@ -124,22 +124,22 @@ heuristique(U,H) :-
    % par rapport a l'etat final F
 
 	diff_elements(X, Y, H) :-
-	(X \= Y -> 
-	H=1
-	;
-	H=0).
+		(X \= Y -> 
+		H=1
+		;
+		H=0).
 
 	diff_ligne([],[],0).
 	diff_ligne([A|B], [C|D], Hl) :-
-	diff_ligne(B, D, N),
-	diff_elements(A, C, H),
-	Hl is ( N + H).
+		diff_ligne(B, D, N),
+		diff_elements(A, C, H),
+		Hl is ( N + H).
 
 	diff_mat([],[],0).
 	diff_mat([A|B], [C|D], Hl) :-
-	diff_mat(B, D, N),
-	diff_ligne(A, C, H),
-	Hl is ( N + H).
+		diff_mat(B, D, N),
+		diff_ligne(A, C, H),
+		Hl is ( N + H).
  
 	
 	
@@ -154,7 +154,31 @@ heuristique(U,H) :-
    % entre la position courante de la piece et sa positon dans l'etat final
 
 
-    heuristique2(U, H) :- true.     %********
-                                    % A FAIRE
-                                    %********
- 
+    heuristique2(U, H) :- true.
+
+coordonnees([L,C], Mat, Elt):-
+	nth1(L,Mat,LM),
+	nth1(C,LM,Elt).
+.
+dm(M1,M2,H) :-
+	coordonnees([L1,C1], M1, Elt),
+	coordonnees([L2,C2], M2, Elt),
+	L is (abs(L2-L1)+abs(C2-C1)),
+	H is (L+H).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
