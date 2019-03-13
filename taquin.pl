@@ -19,6 +19,7 @@ initial_state([ [a, b, c],
 initial_state([ [b, h, c],     % EXEMPLE
                 [a, f, d],     % DU COURS
                 [g,vide,e] ]). % h=5 = f* = 5actions
+
 /*
 initial_state([ [b, c, d],
                 [a,vide,g],
@@ -141,10 +142,9 @@ heuristique(U,H) :-
 		diff_ligne(A, C, H),
 		Hl is ( N + H).
  
-	
-	
-
-    heuristique1(U, H) :- true.     
+    heuristique1(U, H) :-
+		final_state(M),
+		diff_mat(U,M,H).     
    
    %****************
    %HEURISTIQUE no 2
@@ -154,17 +154,21 @@ heuristique(U,H) :-
    % entre la position courante de la piece et sa positon dans l'etat final
 
 
-    heuristique2(U, H) :- true.
+	coordonnees([L,C], Mat, Elt):-
+		nth1(L,Mat,LM),
+		nth1(C,LM,Elt).
 
-coordonnees([L,C], Mat, Elt):-
-	nth1(L,Mat,LM),
-	nth1(C,LM,Elt).
-.
-dm(M1,M2,H) :-
-	coordonnees([L1,C1], M1, Elt),
-	coordonnees([L2,C2], M2, Elt),
-	L is (abs(L2-L1)+abs(C2-C1)),
-	H is (L+H).
+	dm(M1,M2,H) :-
+		coordonnees([L1,C1], M1, Elt),
+		coordonnees([L2,C2], M2, Elt),
+		Elt \= 'vide',
+		H is (abs(L2-L1)+abs(C2-C1)).
+
+    heuristique2(U, H) :-
+		final_state(M),
+		findall(H2,dm(U,M,H2),LH2),
+		sumlist(LH2, H).
+
 
 
 
