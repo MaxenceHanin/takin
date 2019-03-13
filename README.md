@@ -61,7 +61,7 @@ initial_state(IS), findall([Y,NS],rule(Y,1,IS,NS),L).
 ### Développement des 2 heuristiques
 
 #### Nombre de pièce maplacées
-Pour trouver le nombre de pièce malplacées on définit d'abord un prédicat nous permettant de comparer deux éléments d'une liste puis un prédicat appelant cette comparaison sur une ligne de nos matrices puis un prédicat appelant ces différentes lignes.
+Pour trouver le nombre de pièce mal placées on définit d'abord un prédicat nous permettant de comparer deux éléments d'une liste puis un prédicat appelant cette comparaison sur une ligne de nos matrices puis un prédicat appelant ces différentes lignes.
 
 ```pl
 diff_elements(X, Y, H) :-
@@ -83,8 +83,22 @@ diff_mat([A|B], [C|D], Hl) :-
 	Hl is ( N + H).
 ```
 #### Distance de Manhattan
+D'abord on créé les coordonnées, ensuite on trouve les heuristiques pour chaque élément, puis on somme ces heuristiques avec findall
 
 ```pl
-coord([lig,col], Mat, Elt) #peut servir a avoir l'element a partir d'une coordonnee ou les coordonnees d'un element
+coordonnees([L,C], Mat, Elt):-
+	nth1(L,Mat,LM),
+	nth1(C,LM,Elt).
+
+dm(M1,M2,H) :-
+	coordonnees([L1,C1], M1, Elt),
+	coordonnees([L2,C2], M2, Elt),
+	Elt \= 'vide',
+	H is (abs(L2-L1)+abs(C2-C1)).
+
+heuristique2(U, H) :-
+	final_state(M),
+	findall(H2,dm(U,M,H2),LH2),
+	sumlist(LH2, H).
 
 ```
