@@ -83,7 +83,7 @@ diff_mat([A|B], [C|D], Hl) :-
 	Hl is ( N + H).
 ```
 #### Distance de Manhattan
-D'abord on créé les coordonnées, ensuite on trouve les heuristiques pour chaque élément, puis on somme ces heuristiques avec findall
+D'abord on créé les coordonnées, ensuite on trouve les heuristiques pour chaque élément, puis on somme ces heuristiques avec findall.
 
 ```pl
 coordonnees([L,C], Mat, Elt):-
