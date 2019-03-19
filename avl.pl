@@ -1,7 +1,7 @@
 %***************************
 % Gestion d'un AVL en Prolog
 %***************************
-
+:-['taquin.pl']
 %***************************
 % INSA TOULOUSE - P.ESQUIROL
 % mars 2015
@@ -88,7 +88,7 @@ put_90(Avl) :-
 
 put_90(nil,Str) :-
 	write(Str), write('.').
-put_90(avl(G,R,D,_H),Str) :-
+put_90(avl(G,R,D,_H),Str) :-https://github.com/MaxenceHanin/takin
 	append_strings(Str, "   ", Str2),
 	put_90(D,Str2),
 	nl, write(Str), write(R),nl,
@@ -207,13 +207,13 @@ suppress(Elem, AVL, NEW_AVL) :-
 	AVL = avl(Gauche, Racine, Droite, _Hauteur),
 	(Elem = Racine ->
 		% cas de la suppression de la racine de l'avl
-		(Gauche = nil -> % cas simple d'une feuille ou d'un avl sans fils gauche
+		(Gauche = nil -> % cas simple d'une feuille ou d un avl sans fils gauche
 			NEW_AVL = Droite
 		; 
-			(Droite = nil -> % cas simple d'un avl avec fils gauche mais sans fils droit
+			(Droite = nil -> % cas simple d un avl avec fils gauche mais sans fils droit
 				NEW_AVL = Gauche
 			;
-				% cas d'un avl avec fils gauche ET fils droit 
+				% cas d un avl avec fils gauche ET fils droit 
 				%Gauche \= nil
 				%Droite \= nil
 				suppress_max(Max, Gauche, New_Gauche),
@@ -222,7 +222,7 @@ suppress(Elem, AVL, NEW_AVL) :-
 			)
 		)
 	;
-		% cas des suppressions d'un element autre que la racine 
+		% cas des suppressions d un element autre que la racine 
 		(Elem @< Racine ->
 			% suppression dans le ss-arbre gauche
 			suppress(Elem, Gauche, New_Gauche),
@@ -240,7 +240,7 @@ suppress(Elem, AVL, NEW_AVL) :-
 	%-------------------------------------------------------
 	% Suppression du plus petit element dans un avl non vide
 	%-------------------------------------------------------
-	% Si l'avl est vide, le prédicat échoue
+	% Si l avl est vide, le prédicat échoue
 
 suppress_min(Min, AVL, NEW_AVL) :-
 	AVL = avl(Gauche,Racine,Droite, _Hauteur),
@@ -257,7 +257,7 @@ suppress_min(Min, AVL, NEW_AVL) :-
 	%-------------------------------------------------------
 	% Suppression du plus grand element dans un avl non vide
 	%-------------------------------------------------------
-	% Si l'avl est vide, le prédicat échoue
+	% Si l avl est vide, le prédicat échoue
 
 suppress_max(Max, AVL, NEW_AVL) :-
 	AVL = avl(Gauche,Racine,Droite, _Hauteur),
@@ -272,10 +272,10 @@ suppress_max(Max, AVL, NEW_AVL) :-
 	).
 	
 	%----------------------------------------
-	% Re-equilibrages d'un avl vers la gauche
+	% Re-equilibrages d un avl vers la gauche
 	%----------------------------------------
-	% - soit apres insertion   d'un element dans le sous-arbre droite
-	% - soit apres suppression d'un élément dans le sous-arbre gauche
+	% - soit apres insertion   d un element dans le sous-arbre droite
+	% - soit apres suppression d un élément dans le sous-arbre gauche
 	%----------------------------------------------------------------
 
 left_balance(Avl, New_Avl) :-
@@ -299,16 +299,16 @@ left_balance(Avl, New_Avl) :-
 			left_rotate(Avl_Int, New_Avl)
 		)
 	;
-	% la suppression n'a pas desequilibre l'avl
+	% la suppression n a pas desequilibre l avl
 		New_Hauteur is 1+max(HG,HD),
 		New_Avl = avl(Gauche, Racine, Droite, New_Hauteur)
 	).
 
 	%----------------------------------------
-	% Re-equilibrages d'un avl vers la droite
+	% Re-equilibrages d un avl vers la droite
 	%----------------------------------------
-	% - soit apres insertion   d'un element dans le sous-arbre gauche
-	% - soit apres suppression d'un élément dans le sous-arbre droite
+	% - soit apres insertion   d un element dans le sous-arbre gauche
+	% - soit apres suppression d un élément dans le sous-arbre droite
 	%----------------------------------------------------------------
 	
 right_balance(Avl, New_Avl) :-
@@ -360,3 +360,76 @@ avl_test(10, Final) :-
    (for(I,1,20), fromto(Init,In,Out,Final) do
      insert(I,In,Out)
    ).
+
+
+%-----------------------------------------
+% Aetoile
+%-----------------------------------------
+
+affiche_solution(Q,Etat):-
+	belongs([Etat,_,Pere,_], Q),
+	affiche_solution(Q,Pere).% a finir
+	
+	
+
+% Retourne une liste de tout les successeurs possibles de U
+
+expand(U, Succ, Gu):-
+	findall([NS,[F,H,G],U,Y],rule(Y,1,U,NS),Succ),
+	G is Gu+1,
+	heuristique(U,H),
+	F is (G+H).
+
+
+
+traiter_successors([Etat,_, _, _], Pf, Pu):-
+	belongs([Etat,_,_,_],Q).
+
+traiter_successors([Etat, [F,H,G], Pere ,Action], Pf, Pu):-
+	belongs([Etat,Val,_,_],Pu),
+	([F,H,G] @< Val ->
+	 suppress([Etat,Val,_,_], Pu, New_Pu), %rajouter les output new_newpf et new_new_pu
+	suppress([Etat,Val,_,_], Pf, New_Pf),
+	insert([Etat, [F,H,G], Pere ,Action],New_Pu, New2_Pu),
+	insert([Etat, [F,H,G], Pere ,Action],New_Pf, New2_Pf).),
+	
+
+loop_successors([],_,_).
+loop_successors([S1|Succ],Pf, Pu),
+	traiter_successors(S1, New_Pf, New_Pu),
+	loop_successors(Succ, New_Pf, New_Pu).
+
+aetoile(nil,nil,_) :-
+write('PAS DE SOLUTION , Pf Pu vides').
+
+aetoile(avl(G,Sf,D,H),Pu,Q) :-
+	final_state(Sf),
+	affiche_solution(Q,Sf).
+	
+aetoile(Pf,Pu,Q) :- 
+	suppress_min([[F,H,G],U], Pf, New_Pf),
+	suppress([U,[F,H,G],Pere,A], Pu, New_Pu),
+	expand(U,Successors, ),
+	loop_successors(Successors, New_Pf, New_Pu),
+	insert([U,[F,H,G],Pere,A], Q, New_Q),
+	aetoile(New_Pf, New_Pu, New_Q).
+	
+	
+
+
+%-----------------------------------------
+% main
+%-----------------------------------------
+
+main() :-
+	initial_state(S0),
+	G0 is 0,
+ 	heuristique(S0,H0),
+	F0 is (G0 + H0),
+	Pf = empty(nil),
+	Pu = empty(nil),
+	Q = empty(nil),
+	insert([[F0,H0,G0],S0], Pf, New_Pf),
+	insert([S0, [F0,H0,G0],nil,nil], Pu, New_Pu),
+	aetoile(New_Pf,New_Pu,Q).
+
