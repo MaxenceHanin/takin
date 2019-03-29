@@ -1,3 +1,5 @@
+:- lib(listut). 
+:- use_module(library(clpfd)).
 	/*********************************
 	DESCRIPTION DU JEU DU TIC-TAC-TOE
 	*********************************/
@@ -41,13 +43,14 @@ adversaire(o,x).
 
 
 	/****************************************************
-	 DEFINIR ICI � l'aide du pr�dicat ground/1 comment
+	 DEFINIR ICI � l aide du pr�dicat ground/1 comment
 	 reconnaitre une situation terminale dans laquelle il
-	 n'y a aucun emplacement libre : aucun joueur ne peut
+	 n y a aucun emplacement libre : aucun joueur ne peut
 	 continuer � jouer (quel qu'il soit).
 	 ****************************************************/
 
-% situation_terminale(_Joueur, Situation) :-   ? ? ? ? ?
+situation_terminale(_Joueur, Situation) :-
+	ground(Situation).
 
 /***************************
  DEFINITIONS D'UN ALIGNEMENT
@@ -61,12 +64,17 @@ alignement(D, Matrix) :- diagonale(D,Matrix).
 	 DEFINIR ICI chaque type d'alignement maximal 
  	 existant dans une matrice carree NxN.
 	 ********************************************/
-	
-% ligne(L, M) :-  ... ? ...
- 
-% colonne(C,M) :- ? ? ? ?
 
-	/* D�finition de la relation liant une diagonale D � la matrice M dans laquelle elle se trouve.
+ligne(L, M) :-
+	nth1(X,M,L).
+	
+ 
+colonne(C,M) :-
+	transpose(M,Mt),
+	ligne(C,Mt).
+	
+
+	/* Definition de la relation liant une diagonale D � la matrice M dans laquelle elle se trouve.
 		il y en a 2 sortes de diagonales dans une matrice carree(https://fr.wikipedia.org/wiki/Diagonale) :
 		- la premiere diagonale (principale) (descendante) : (A I)
 		- la seconde diagonale  (ascendante)  : (R Z)
@@ -81,8 +89,7 @@ alignement(D, Matrix) :- diagonale(D,Matrix).
 		R . . . . . . . I
 	*/
 		
-diagonale(D, M) :- premiere_diag(1,D,M).
-% ??? 2eme clause A COMPLETER 
+diagonale(D, M) :- premiere_diag(1,D,M); seconde_diag(1,D,M).
 
 premiere_diag(_,[],[]).
 premiere_diag(K,[E|D],[Ligne|M]) :-
@@ -91,7 +98,13 @@ premiere_diag(K,[E|D],[Ligne|M]) :-
 	premiere_diag(K1,D,M).
 
 % definition de la seconde diagonale A COMPLETER
-% seconde_diag(K,M,D) :- ???
+
+seconde_diag(_,[],[]).
+seconde_diag(K,[E|D],[Ligne|M]) :-
+	reverse(Ligne,LigneRev),
+	nth1(K,LigneRev,E),
+	K1 is K+1,
+	seconde_diag(K1,D,M).
 
 
 	/***********************************
@@ -108,8 +121,9 @@ possible([   ], _).
 	faut pas realiser l'unification.
 	*/
 
-% A FAIRE 
-% unifiable(X,J) :- ? ? ? ? ?
+unifiable(X,J) :-
+	var(X); X==J.
+	
 	
 	/**********************************
 	 DEFINITION D'UN ALIGNEMENT GAGNANT
@@ -122,24 +136,28 @@ possible pour J qui n'a aucun element encore libre.
 Un alignement perdant pour J est gagnant
 pour son adversaire.
 	*/
+alignement_gagnant([],_).
+alignement_gagnant([X|L], J) :-
+	ground([X|L]),
+	X==J,
+	alignement_gagnant(L, J).
 
-% A FAIRE
-
-% alignement_gagnant(Ali, J) :- ? ? ? ?
-
-% alignement_perdant(Ali, J) :- ? ? ? ?
+alignement_perdant(Ali, J) :- 
+	adversaire(J,A),
+	alignement_gagnant(Ali,A).
 
 
 	/******************************
 	DEFINITION D'UN ETAT SUCCESSEUR
 	*******************************/
 
-     /*Il faut definir quelle op�ration subitune matrice M representant la situation courante
+     /*Il faut definir quelle op�ration subit une matrice M representant la situation courante
 	lorsqu'un joueur J joue en coordonnees [L,C]
      */	
 
-% A FAIRE
-% successeur(J,Etat,[L,C]) :- ? ? ? ?  
+successeur(J,Etat,[L,C]) :-
+	nth1(L,Etat,Lig), nth1(C,Lig,J).
+	
 
 	/**************************************
    	 EVALUATION HEURISTIQUE D'UNE SITUATION
@@ -170,7 +188,9 @@ heuristique(J,Situation,H) :-		% cas 2
 % c-a-d si Situation n'est ni perdante ni gagnante.
 
 % A FAIRE 					cas 3
-% heuristique(J,Situation,H) :- ? ? ? ?
-
-
+heuristique(J,Situation,H) :-
+findall(Alig, (possible(alignement(Ali, Situation),J), Alig is alignement(Ali, Situation)),Res),
+adversaire(J,A),
+findall(Alig2, (possible(alignement(Ali2, Situation),A), Alig2 is alignement(Ali2, Situation)),Res2),
+length(Res,H).
 
