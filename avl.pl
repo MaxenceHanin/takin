@@ -1,7 +1,6 @@
 %***************************
 % Gestion d'un AVL en Prolog
 %***************************
-:-['taquin.pl']
 %***************************
 % INSA TOULOUSE - P.ESQUIROL
 % mars 2015
@@ -88,7 +87,7 @@ put_90(Avl) :-
 
 put_90(nil,Str) :-
 	write(Str), write('.').
-put_90(avl(G,R,D,_H),Str) :-https://github.com/MaxenceHanin/takin
+put_90(avl(G,R,D,_H),Str) :-
 	append_strings(Str, "   ", Str2),
 	put_90(D,Str2),
 	nl, write(Str), write(R),nl,
@@ -362,74 +361,4 @@ avl_test(10, Final) :-
    ).
 
 
-%-----------------------------------------
-% Aetoile
-%-----------------------------------------
-
-affiche_solution(Q,Etat):-
-	belongs([Etat,_,Pere,_], Q),
-	affiche_solution(Q,Pere).% a finir
-	
-	
-
-% Retourne une liste de tout les successeurs possibles de U
-
-expand(U, Succ, Gu):-
-	findall([NS,[F,H,G],U,Y],rule(Y,1,U,NS),Succ),
-	G is Gu+1,
-	heuristique(U,H),
-	F is (G+H).
-
-
-
-traiter_successors([Etat,_, _, _], Pf, Pu):-
-	belongs([Etat,_,_,_],Q).
-
-traiter_successors([Etat, [F,H,G], Pere ,Action], Pf, Pu):-
-	belongs([Etat,Val,_,_],Pu),
-	([F,H,G] @< Val ->
-	 suppress([Etat,Val,_,_], Pu, New_Pu), %rajouter les output new_newpf et new_new_pu
-	suppress([Etat,Val,_,_], Pf, New_Pf),
-	insert([Etat, [F,H,G], Pere ,Action],New_Pu, New2_Pu),
-	insert([Etat, [F,H,G], Pere ,Action],New_Pf, New2_Pf).),
-	
-
-loop_successors([],_,_).
-loop_successors([S1|Succ],Pf, Pu),
-	traiter_successors(S1, New_Pf, New_Pu),
-	loop_successors(Succ, New_Pf, New_Pu).
-
-aetoile(nil,nil,_) :-
-write('PAS DE SOLUTION , Pf Pu vides').
-
-aetoile(avl(G,Sf,D,H),Pu,Q) :-
-	final_state(Sf),
-	affiche_solution(Q,Sf).
-	
-aetoile(Pf,Pu,Q) :- 
-	suppress_min([[F,H,G],U], Pf, New_Pf),
-	suppress([U,[F,H,G],Pere,A], Pu, New_Pu),
-	expand(U,Successors, ),
-	loop_successors(Successors, New_Pf, New_Pu),
-	insert([U,[F,H,G],Pere,A], Q, New_Q),
-	aetoile(New_Pf, New_Pu, New_Q).
-	
-	
-
-
-%-----------------------------------------
-% main
-%-----------------------------------------
-
-main() :-
-	initial_state(S0),
-	G0 is 0,
- 	heuristique(S0,H0),
-	F0 is (G0 + H0),
-	Pf = empty(nil),
-	Pu = empty(nil),
-	Q = empty(nil),
-	insert([[F0,H0,G0],S0], Pf, New_Pf),
-	insert([S0, [F0,H0,G0],nil,nil], Pu, New_Pu),
-	aetoile(New_Pf,New_Pu,Q).
 

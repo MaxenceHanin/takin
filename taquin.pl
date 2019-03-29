@@ -32,7 +32,7 @@ initial_state([ [f, g, a],
 initial_state([ [e, f, g],
                 [d,vide,h],
                 [c, b, a]  ]). % h=24, f*=30 
-*/  
+*/
 
    %******************
    % ETAT FINAL DU JEU
@@ -168,6 +168,94 @@ heuristique(U,H) :-
 		final_state(M),
 		findall(H2,dm(U,M,H2),LH2),
 		sumlist(LH2, H).
+
+%-----------------------------------------
+% Aetoile
+%-----------------------------------------
+	
+print_solution(Q) :- final_state(M), print_solution(Q, M).
+	print_solution(Q, nil).
+print_solution(Q, Pere) :- 
+	Parent_node = [Pere, _, New_Pere, A],
+	belongs(Parent_node, Q),
+	write(Pere), write(" --> "),
+	writeln(A),
+	print_solution(Q, New_Pere).
+
+% Retourne une liste de tous les successeurs possibles de U
+
+expand([U,[F,H,G],Pere,A], Succ):-
+	findall([X,Y], (member(X, [up, down, right,left]), rule(X, 1, U, Y)), Res),
+	loop_exp(Res, [U,[F,H,G],Pere,A], Succ).
+
+loop_exp(Res,[U,[F,H,G],Pere,A], L) :- 
+	loop_exp(Res, [U,[F,H,G],Pere,A], L, []).
+	loop_exp([], [U,[F,H,G],Pere,A], Acu, Acu).
+
+loop_exp([[Action, State]|Succ], [U,[F,H,G],Pere,A], Res, Acu) :-
+	heuristique(State,HS),
+	GS is G+1,
+	FS is HS+GS,
+	loop_exp(Succ,[U,[F,H,G],Pere,A],Res,[[State,[FS,HS,GS],U,Action]|Acu]).
+
+
+
+loop_successors([], Pf, Pu, Q, Pf, Pu).
+loop_successors([S1|Succ], Pf, Pu, Q, New_Pf, New_Pu) :-
+	belongs(S1, Q),
+	loop_successors(Succ, Pf, Pu, Q, New_Pf, New_Pu).
+
+loop_successors([[U, [F,H,G], P, A]|Succ], Pf, Pu, Q, New_Pf, New_Pu) :-
+	belongs([U, [F2,H2,G2], _, _], Pu), [F2,H2,G2] @=<[F,H,G],
+	loop_successors(Succ, Pf, Pu, Q, New_Pf, New_Pu).
+
+loop_successors([[U, [F,H,G], P, A]|Succ], Pf, Pu, Q, New_Pf, New_Pu) :-
+	belongs([U, [F2,H2,G2], _, _], Pu), [F2,H2,G2] @> [F,H,G],
+	suppress([U, [F2,H2,G2], _, _], Pu, Pu1),
+	insert([U, [F,H,G], P, A], Pu1, Pu2),
+	suppress([[F2,H2,G2],U], Pf, Pf1),
+	insert([[F,H,G],U], Pf1, Pf2),
+	loop_successors(Succ, Pf2, Pu2, Q, New_Pf, New_Pu).
+
+loop_successors([[U, [F,H,G], P, A]|Succ], Pf, Pu, Q, New_Pf, New_Pu) :-
+	insert([U, [F,H,G], P, A], Pu, Pu1),
+	insert([[F,H,G],U], Pf, Pf1),
+	loop_successors(Succ, Pf1, Pu1, Q, New_Pf, New_Pu).
+
+aetoile(nil,nil,_) :-
+write('PAS DE SOLUTION , Pf Pu vides').
+
+aetoile(Pf,_,Q) :-
+	suppress_min(Min,Pf, _),
+	final_state(F),
+	member(F, Min),
+	print_solution(Q).
+
+	
+aetoile(Pf,Pu,Q) :- 
+	suppress_min([[F,H,G],U], Pf, New_Pf),
+	suppress([U,[F,H,G],Pere,A], Pu, New_Pu),
+	expand([U,[F,H,G],Pere,A], Successors),			%pas sur que ce soit G
+	loop_successors(Successors, New_Pf, New_Pu, Q, New2_Pf, New2_Pu),
+	insert([U,[F,H,G],Pere,A], Q, New_Q),
+	aetoile(New2_Pf, New2_Pu, New_Q).
+
+
+%-----------------------------------------
+% main
+%-----------------------------------------
+
+main :-
+	initial_state(S0),
+	G0 is 0,
+ 	heuristique(S0,H0),
+	F0 is (G0 + H0),
+	empty(Pf),
+	empty(Pu),
+	empty(Q),
+	insert([[F0,H0,G0],S0], Pf, New_Pf),
+	insert([S0, [F0,H0,G0],nil,nil], Pu, New_Pu),
+	aetoile(New_Pf,New_Pu,Q).
 
 
 
