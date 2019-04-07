@@ -138,15 +138,10 @@ A FAIRE : ECRIRE ici les clauses de meilleur
 	/*le meilleur dans une liste a un seul element est cet element*/
 	meilleur([Elem],Elem).
 	
-	meilleur([[Cx,Vx]|L],[Bestc,Bestv]):-
-	L \= [],
-	meilleur(L,[Cy,Vy]),
-	((Vy < Vx)->
-	/*entre X et Y on garde celui qui a la petite valeur de V*/
-			[Bestc,Bestv]=[Cy,Vy]
-			;
-			[Bestc,Bestv]=[Cx,Vx]).
-			
+	meilleur([[_,Vx]|L],M):-
+	M = [_,Vy],
+	meilleur(L,M),Vx>=Vy.
+	meilleur(H|_],H).
 	
 	/*Cest le prédicat "successeurs" qui permet de connaître sous forme de liste l’ensemble des couples [Coord, Situation_Resultante]
 tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée.*/
@@ -177,7 +172,7 @@ main(B,V,Pmax) :-
 	%win(S),
 	%loose(S),
 	%nul(S),
-	sit1(S),
+	situation_initiale(S),
 	negamax(J, S, 1, Pmax, [B, V]).
 	
 
@@ -190,3 +185,6 @@ A FAIRE :
 test_disp(S):-
 	sit2(S),
 	display(S).
+	
+/*4.3 Que faut-il reprendre pour passer au jeu du puissance 4 ?*/
+/*il faut modifier successeur pour restreindre les coups suivants possibles à jouer*/
