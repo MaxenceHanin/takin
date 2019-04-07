@@ -56,6 +56,23 @@
 A FAIRE : ECRIRE ici les clauses de negamax/5
 .....................................
 	*/
+	/* 1 la profondeur maximale est atteinte */
+	negamax(J, S, Pmax, Pmax, [rien, H]):-
+		heuristique(J,S,H).
+	
+	/* 2 la profondeur maximale n'est pas  atteinte mais J ne
+	peut pas jouer*/
+	negamax(J, S, P, Pmax, [rien, H]):-	
+		heuristique(J,S,H),
+		ground(S).	/*ground -> pas de var libre -> J ne peux pas jouer*/
+		
+	/*3 la profondeur maxi n'est pas atteinte et J peut encore
+	jouer*/
+	negamax(J, S, P, Pmax, [C1,V2]):-
+		successeurs(J,S,Succ), not ground(S),
+		loop_negamax(J,P,Pmax,Succ,L),
+		meilleur(L,[C1,V1]),
+		V2 is -V1.
 
 
 	/*******************************************
@@ -64,14 +81,14 @@ A FAIRE : ECRIRE ici les clauses de negamax/5
 	 *******************************************/
 
 	 /*
-   	 successeurs(+J,+Etat, ?Succ)
+   	 successeurs(+J,+S, ?Succ)
 
    	 retourne la liste des couples [Coup, Etat_Suivant]
  	 pour un joueur donne dans une situation donnee 
 	 */
 
-successeurs(J,Etat,Succ) :-
-	copy_term(Etat, Etat_Suiv),
+successeurs(J,S,Succ) :-
+	copy_term(S, Etat_Suiv),
 	findall([Coup,Etat_Suiv],
 		    successeur(J,Etat_Suiv,Coup),
 		    Succ).
@@ -89,10 +106,10 @@ successeurs(J,Etat,Succ) :-
 
 loop_negamax(_,_, _  ,[],                []).
 loop_negamax(J,P,Pmax,[[Coup,Suiv]|Succ],[[Coup,Vsuiv]|Reste_Couples]) :-
-	loop_negamax(J,P,Pmax,Succ,Reste_Couples),
-	adversaire(J,A),
-	Pnew is P+1,
-	negamax(A,Suiv,Pnew,Pmax, [_,Vsuiv]).
+	loop_negamax(J,P,Pmax,Succ,Reste_Couples), /*boucle jusqu'à la fin de Succ*/
+	adversaire(J,A), /*définie A comme l'adversaire de J*/
+	Pnew is P+1, /*incrémmente la profondeur P */
+	negamax(A,Suiv,Pnew,Pmax, [_,Vsuiv]). /*applique l'algo negamax sur les elements contenus ds Succ, et avec [_,Vsuiv] on récupère leur valeur*/
 
 	/*
 
@@ -116,19 +133,53 @@ A FAIRE : commenter chaque litteral de la 2eme clause de loop_negamax/5,
 	  X et Y,le meilleur couple de L 
 	  Entre X et Y on garde celui qui a la petite valeur de V.
 
-A FAIRE : ECRIRE ici les clauses de meilleur/2
+A FAIRE : ECRIRE ici les clauses de meilleur
 	*/
+	/*le meilleur dans une liste a un seul element est cet element*/
+	meilleur([Elem],Elem).
+	
+	meilleur([[Cx,Vx]|L],[Bestc,Bestv]):-
+	L \= [],
+	meilleur(L,[Cy,Vy]),
+	((Vy < Vx)->
+	/*entre X et Y on garde celui qui a la petite valeur de V*/
+			[Bestc,Bestv]=[Cy,Vy]
+			;
+			[Bestc,Bestv]=[Cx,Vx]).
+			
+	
+	/*Cest le prédicat "successeurs" qui permet de connaître sous forme de liste l’ensemble des couples [Coord, Situation_Resultante]
+tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée.*/
+/* Tester ce prédicat en déterminant la liste des couples [Coup, Situation Resultante] pour le joueur X dans la situation initiale.*/
 
-
+test_succ(J,S,Succ) :- 
+	joueur_initial(J),
+	sit3(S),
+	successeurs(J,S,Succ).
 
 	/******************
   	PROGRAMME PRINCIPAL
   	*******************/
 
-main(B,V, Pmax) :-
-
-	true.        
-
+		
+	display([[A,B,C],[D,E,F],[G,H,I]]) :-
+	 writeln('-----------'),
+	 write('|'), write(A), write(' | '), write(B), write(' | '), write(C), writeln('|'),
+	 writeln('-----------'),
+	 write('|'), write(D), write(' | '), write(E), write(' | '), write(F), writeln('|'),
+	 writeln('-----------'),
+	 write('|'), write(G), write(' | '), write(H), write(' | '), write(I), writeln('|'),
+ 	 writeln('-----------').
+		
+main(B,V,Pmax) :-
+	adversaire(J,A),
+	joueur_initial(J),
+	%win(S),
+	%loose(S),
+	%nul(S),
+	sit1(S),
+	negamax(J, S, 1, Pmax, [B, V]).
+	
 
 	/*
 A FAIRE :
@@ -136,4 +187,6 @@ A FAIRE :
 	Pmax = 1, 2, 3, 4 ...
 	Commentez les résultats obtenus.
 	*/
-
+test_disp(S):-
+	sit2(S),
+	display(S).

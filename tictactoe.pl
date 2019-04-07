@@ -1,5 +1,5 @@
 /*:- lib(listut). */
-:- use_module(library(clpfd)).
+:-use_module(library(clpfd), [transpose/2 as transp]).
 	/*********************************
 	DESCRIPTION DU JEU DU TIC-TAC-TOE
 	*********************************/
@@ -60,14 +60,22 @@ alignement(L, Matrix) :- ligne(    L,Matrix).
 alignement(C, Matrix) :- colonne(  C,Matrix).
 alignement(D, Matrix) :- diagonale(D,Matrix).
 
+% TEST HEURISTIQUE
+sit1([[A,x,B],[C,x,o],[o,D,E]]).
+sit2([[a,b,c],[d,e,f],[g,h,i]]).
+win([[x,x,x],[o,x,o],[o,o,E]]).
+loose([[o,o,o],[x,o,x],[x,x,E]]).
+nul([[x,o,x],[o,x,o],[o,x,o]]).
+sit3([[o,F,o],[x,o,x],[x,V,x]]).
+
 /***************************
  TEST SOUS FONCTIONS
  ***************************/
 
-test_ali(L,M) :- findall(L,alignement(L,M),List), sit2(M).
-test_lig(L,M) :- findall(L,ligne(L,M),List), sit2(M).
-test_col(L,M) :- findall(L,colonne(L,M),List), sit2(M).
-test_diag(L,M) :- findall(L,diagonale(L,M),List), sit2(M).
+test_ali(L,M) :- sit2(M), alignement(L,M).
+test_lig(L,M) :- sit2(M),ligne(L,M).
+test_col(L,M) :- sit2(M),colonne(L,M).
+test_diag(L,M) :- sit2(M), diagonale(L,M).
 
 	/********************************************
 	 DEFINIR ICI chaque type d'alignement maximal 
@@ -79,7 +87,7 @@ ligne(L, M) :-
 	
  
 colonne(C,M) :-
-	transpose(M,Mt),
+	transp(M,Mt),
 	ligne(C,Mt).
 	
 
@@ -205,7 +213,10 @@ findall(Ali, (alignement(Ali,Situation),possible(Ali,A)),L2),
 length(L2,N2),
 H is (N1-N2).
 
-% TEST HEURISTIQUE
-sit1([[A,x,B],[C,x,o],[o,D,E]]).
-sit2([[a,b,c],[d,e,f],[g,h,i]]).
+% TEST
+test_heur_init(J,S,H) :- sit_init(S),heuristique(J,S,H).
+test_heur(J,S,H) :- sit3(S),heuristique(J,S,H).
+test_heur_win(J,S,H) :- win(S),heuristique(J,S,H).
+test_heur_loose(J,S,H) :- loose(S),heuristique(J,S,H).
+test_heur_nul(J,S,H) :- nul(S),heuristique(J,S,H).
 
