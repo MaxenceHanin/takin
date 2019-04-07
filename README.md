@@ -174,7 +174,7 @@ aetoile(Pf,_,Q) :-
 aetoile(Pf,Pu,Q) :-
 	suppress_min([[F,H,G],U], Pf, New_Pf),
 	suppress([U,[F,H,G],Pere,A], Pu, New_Pu),
-	expand([U,[F,H,G],Pere,A], Successors),			%pas sur que ce soit G
+	expand([U,[F,H,G],Pere,A], Successors),
 	loop_successors(Successors, New_Pf, New_Pu, Q, New2_Pf, New2_Pu),
 	insert([U,[F,H,G],Pere,A], Q, New_Q),
 	aetoile(New2_Pf, New2_Pu, New_Q).
@@ -233,8 +233,49 @@ loop_successors([[U, [F,H,G], P, A]|Succ], Pf, Pu, Q, New_Pf, New_Pu) :-
 ```
 ### Analyse expérimentale
 
+Grâce predicat time/1 on peut savoir combien de temps mettent les heuristiques pour être calculé.
+```pl
+initial_state(S),time(heuristique1(S,H)).
+>> % 63 inferences, 0.000 CPU in 0.000 seconds (93% CPU, 885939 Lips)
+>> S = [[a, b, c], [g, h, d], [vide, f, e]],
+>> H = 3.
+
+initial_state(S),time(heuristique2(S,H)).
+>> % 428 inferences, 0.000 CPU in 0.000 seconds (99% CPU, 4598195 Lips)
+>> S = [[a, b, c], [g, h, d], [vide, f, e]],
+>> H = 2.
 
 
+initial_state(S),time(heuristique1(S,H)).
+>> % 53 inferences, 0.000 CPU in 0.000 seconds (95% CPU, 2558285 Lips)
+>> S = [[b, h, c], [a, f, d], [g, vide, e]],
+>> H = 5.
+
+initial_state(S),time(heuristique2(S,H)).
+>> % 16,333 inferences, 0.012 CPU in 0.012 seconds (100% CPU, 1392422 Lips)
+>> S = [[b, h, c], [a, f, d], [g, vide, e]],
+>> H = 5.
+
+/* On voit que plus l'heuristique augmente plus l'écart les temps d'éxécution augmente. Les résultats des différentes éxécutions sont affichées dans le tableau ci-dessous*/
+```
+
+|               | A=2   | A=5   | A=10  | A=20  | A=30  |
+|---------------|-------|-------|-------|-------|-------|
+| Heuristique 1 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| Heuristique 2 | 0.000 | 0.012 | 0.013 | 0.013 | 0.013 |
+avec A le nombre d'actions pour l'heuristique 2
+
+** Quelle longeur de séquence peut-on envisager de résoudre pour le Taquin 4*4 ? **
+
+D'après les résultats obtenues pour le taquin 3*3, on peut dire que l'heuristique1 fonctionnera bien sur du 4*4 pour ce qui est de l'heuristique2 on peut imaginer que certaines situations initales pourrait entrainer un temps de calculs plus long  mais que toute longeur de séquence pourra tout de même être résolue.
+
+** A* trouve-t-il la solution pour la situation initiale suivante : **
+
+** Extension de l'A* au problème du Rubik's Cube**
+Pour représenter le problème du Rubik's Cube nous représenterions les 6 faces par 6 matrices ou chaque couleur serait représenté par une lettre. Les actions possibles se serait de tourner une colonne ou une ligne. Cela résulterais en la modification d'une ligne ou d'une colonne de 4 matrices et la rotation de deux autres.
+```pl
+
+```
 # TP2 :  Algo MinMax
 ## Familiarisation avec le problème du TicTacToe3*3
  **Question 1.2 : sens des requêtes suivantes**
@@ -271,9 +312,7 @@ alignement_perdant(Ali, J) :-
 	adversaire(J,A),
 	alignement_gagnant(Ali,A).
 ```
-### Tests unitaires pour les prédicats
-```pl
-```
+
 ## Développement de l'heuristique h(Joueur, Situation)
 **Question 2.1 développer le prédicat heuristique(Joueur,Sit,H)**
 ```pl
@@ -369,10 +408,17 @@ negamax(J, S, Pmax, Pmax, [rien, H]):-
 
 /* 2 la profondeur maximale n'est pas  atteinte mais J ne
 peut pas jouer*/
+<<<<<<< HEAD
+negamax(J, S, P, Pmax, [rien, H]):-
+	heuristique(J,S,H),
+	ground(S).	/*ground -> pas de var libre -> J ne peux pas jouer*/
+
+=======
 negamax(J, S, P, Pmax, [rien, H]):-	
 	heuristique(J,S,H),
 	ground(S).	/*ground -> pas de var libre -> J ne peux pas jouer*/
 	
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 /*3 la profondeur maxi n'est pas atteinte et J peut encore
 jouer*/
 negamax(J, S, P, Pmax, [C1,V2]):-
@@ -395,7 +441,11 @@ loop_negamax(J,P,Pmax,[[Coup,Suiv]|Succ],[[Coup,Vsuiv]|Reste_Couples]) :-
 ```pl
 /*le meilleur dans une liste a un seul element est cet element*/
 	meilleur([Elem],Elem).
+<<<<<<< HEAD
+
+=======
 	
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 	meilleur([[Cx,Vx]|L],[Bestc,Bestv]):-
 	L \= [],
 	meilleur(L,[Cy,Vy]),
@@ -413,6 +463,11 @@ main(B,V,Pmax) :-
 	negamax(J, S, 1, Pmax, [B, V]).
 ```
 ** Quel prédicat permet de connaître sous forme de liste l’ensemble des couples [Coord, Situation_Resultante]
+<<<<<<< HEAD
+tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée ?**
+```pl
+Cest le prédicat "successeurs"
+=======
 tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée ?
 ```pl
 Cest le prédicat "successeurs" 
@@ -469,10 +524,59 @@ En effet au puissance 4, on ne peut mettre des jetons que de haut en bas, et le 
 **Comment améliorer l’algorithme en élaguant certains coups inutiles (recherche Alpha-Beta) ?
 ```pl
 
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 ```
+** Tester ce prédicat en déterminant la liste des couples [Coup, Situation Resultante] pour le joueur X dans la situation initiale.**
 ```pl
+<<<<<<< HEAD
+test_succ(J,S,Succ) :-
+	joueur_initial(J),
+	sit3(S),
+	successeurs(J,S,Succ).
+=======
 
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 ```
+
+** Quel est le meilleur coup à jouer et le gain espéré pour une profondeur d’analyse de 1, 2, 3, 4 , 5 , 6 , 7, 8, 9 ?
+Expliquer les résultats obtenus pour 9 (toute la grille remplie).**
 ```pl
+<<<<<<< HEAD
+Au dessus de 7, "ERROR: Out of local stack" : le programme n'a pas assez de mémoire, les calculs sont trop longs
 
+8 ?- main(B,V,7).
+B = [2, 2],
+V = 1 .
+
+9 ?- main(B,V,6).
+B = [2, 2],
+V = 3 .
+
+10 ?- main(B,V,5).
+B = [2, 2],
+V = 1 .
+
+11 ?- main(B,V,4).
+B = [2, 2],
+V = 3 .
+
+12 ?- main(B,V,3).
+B = [2, 2],
+V = 1 .
+
+13 ?- main(B,V,2).
+B = [2, 2],
+V = 4 .
+
+14 ?- main(B,V,1).
+B = rien,
+V = 0
+=======
+
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 ```
+
+** Que faut-il reprendre pour passer au jeu du puissance 4 ?**
+
+Il faut modifier successeur pour restreindre les coups suivants possibles à jouer.
+En effet au puissance 4, on ne peut mettre des jetons que de haut en bas,et le jeton est positionné au plus bas possible.

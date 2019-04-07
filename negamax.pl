@@ -2,7 +2,7 @@
 	Ce programme met en oeuvre l'algorithme Minmax (avec convention
 	negamax) et l'illustre sur le jeu du TicTacToe (morpion 3x3)
 	*/
-	
+
 :- [tictactoe].
 
 
@@ -21,9 +21,9 @@
 	pouvant aller jusqu'a la profondeur Pmax.
 
 	Il y a 3 cas a decrire (donc 3 clauses pour negamax/5)
-	
+
 	1/ la profondeur maximale est atteinte : on ne peut pas
-	developper cet Etat ; 
+	developper cet Etat ;
 	il n'y a donc pas de coup possible a jouer (Coup = rien)
 	et l'evaluation de Etat est faite par l'heuristique.
 
@@ -34,7 +34,7 @@
 	et l'evaluation de Etat est faite par l'heuristique.
 
 	3/ la profondeur maxi n'est pas atteinte et J peut encore
-	jouer. Il faut evaluer le sous-arbre complet issu de Etat ; 
+	jouer. Il faut evaluer le sous-arbre complet issu de Etat ;
 
 	- on determine d'abord la liste de tous les couples
 	[Coup_possible, Situation_suivante] via le predicat
@@ -59,13 +59,13 @@ A FAIRE : ECRIRE ici les clauses de negamax/5
 	/* 1 la profondeur maximale est atteinte */
 	negamax(J, S, Pmax, Pmax, [rien, H]):-
 		heuristique(J,S,H).
-	
+
 	/* 2 la profondeur maximale n'est pas  atteinte mais J ne
 	peut pas jouer*/
-	negamax(J, S, P, Pmax, [rien, H]):-	
+	negamax(J, S, P, Pmax, [rien, H]):-
 		heuristique(J,S,H),
 		ground(S).	/*ground -> pas de var libre -> J ne peux pas jouer*/
-		
+
 	/*3 la profondeur maxi n'est pas atteinte et J peut encore
 	jouer*/
 	negamax(J, S, P, Pmax, [C1,V2]):-
@@ -77,14 +77,14 @@ A FAIRE : ECRIRE ici les clauses de negamax/5
 
 	/*******************************************
 	 DEVELOPPEMENT D'UNE SITUATION NON TERMINALE
-	 successeurs/3 
+	 successeurs/3
 	 *******************************************/
 
 	 /*
    	 successeurs(+J,+S, ?Succ)
 
    	 retourne la liste des couples [Coup, Etat_Suivant]
- 	 pour un joueur donne dans une situation donnee 
+ 	 pour un joueur donne dans une situation donnee
 	 */
 
 successeurs(J,S,Succ) :-
@@ -94,7 +94,7 @@ successeurs(J,S,Succ) :-
 		    Succ).
 
 	/*************************************
-         Boucle permettant d'appliquer negamax 
+         Boucle permettant d'appliquer negamax
          a chaque situation suivante :
 	*************************************/
 
@@ -106,10 +106,10 @@ successeurs(J,S,Succ) :-
 
 loop_negamax(_,_, _  ,[],                []).
 loop_negamax(J,P,Pmax,[[Coup,Suiv]|Succ],[[Coup,Vsuiv]|Reste_Couples]) :-
-	loop_negamax(J,P,Pmax,Succ,Reste_Couples), /*boucle jusqu'à la fin de Succ*/
-	adversaire(J,A), /*définie A comme l'adversaire de J*/
-	Pnew is P+1, /*incrémmente la profondeur P */
-	negamax(A,Suiv,Pnew,Pmax, [_,Vsuiv]). /*applique l'algo negamax sur les elements contenus ds Succ, et avec [_,Vsuiv] on récupère leur valeur*/
+	loop_negamax(J,P,Pmax,Succ,Reste_Couples), /*boucle jusqu'ï¿½ la fin de Succ*/
+	adversaire(J,A), /*dï¿½finie A comme l'adversaire de J*/
+	Pnew is P+1, /*incrï¿½mmente la profondeur P */
+	negamax(A,Suiv,Pnew,Pmax, [_,Vsuiv]). /*applique l'algo negamax sur les elements contenus ds Succ, et avec [_,Vsuiv] on rï¿½cupï¿½re leur valeur*/
 
 	/*
 
@@ -120,7 +120,7 @@ A FAIRE : commenter chaque litteral de la 2eme clause de loop_negamax/5,
 
 	/*********************************
 	 Selection du couple qui a la plus
-	 petite valeur V 
+	 petite valeur V
 	 *********************************/
 
 	/*
@@ -130,26 +130,39 @@ A FAIRE : commenter chaque litteral de la 2eme clause de loop_negamax/5,
 	On suppose que chaque element de la liste est du type [C,V]
 	- le meilleur dans une liste a un seul element est cet element
 	- le meilleur dans une liste [X|L] avec L \= [], est obtenu en comparant
-	  X et Y,le meilleur couple de L 
+	  X et Y,le meilleur couple de L
 	  Entre X et Y on garde celui qui a la petite valeur de V.
 
 A FAIRE : ECRIRE ici les clauses de meilleur
 	*/
 	/*le meilleur dans une liste a un seul element est cet element*/
 	meilleur([Elem],Elem).
+<<<<<<< HEAD
+
+=======
 	
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 	meilleur([[Cx,Vx]|L],[Bestc,Bestv]):-
 	L \= [],
 	meilleur(L,[Cy,Vy]),
 	((Vy < Vx)->
 	/*entre X et Y on garde celui qui a la petite valeur de V*/
 			[Bestc,Bestv]=[Cy,Vy]; [Bestc,Bestv]=[Cx,Vx]).
+<<<<<<< HEAD
+
+	/*Cest le prï¿½dicat "successeurs" qui permet de connaï¿½tre sous forme de liste lï¿½ensemble des couples [Coord, Situation_Resultante]
+tels que chaque ï¿½lï¿½ment (couple) associe le coup dï¿½un joueur et la situation qui en rï¿½sulte ï¿½ partir dï¿½une situation donnï¿½e.*/
+/* Tester ce prï¿½dicat en dï¿½terminant la liste des couples [Coup, Situation Resultante] pour le joueur X dans la situation initiale.*/
+
+test_succ(J,S,Succ) :-
+=======
 	
 	/*Cest le prédicat "successeurs" qui permet de connaître sous forme de liste l’ensemble des couples [Coord, Situation_Resultante]
 tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée.*/
 /* Tester ce prédicat en déterminant la liste des couples [Coup, Situation Resultante] pour le joueur X dans la situation initiale.*/
 
 test_succ(J,S,Succ) :- 
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 	joueur_initial(J),
 	sit3(S),
 	successeurs(J,S,Succ).
@@ -157,25 +170,37 @@ test_succ(J,S,Succ) :-
 	/******************
   	PROGRAMME PRINCIPAL
   	*******************/
+<<<<<<< HEAD
+
+=======
 		
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 main(B,V,Pmax) :-
 	adversaire(J,A),
 	joueur_initial(J),
 	situation_initiale(S),
 	negamax(J, S, 1, Pmax, [B, V]).
-	
+
 
 	/*
 A FAIRE :
-	Compléter puis tester le programme principal pour plusieurs valeurs de la profondeur maximale.
+	Complï¿½ter puis tester le programme principal pour plusieurs valeurs de la profondeur maximale.
 	Pmax = 1, 2, 3, 4 ...
-	Commentez les résultats obtenus.
+	Commentez les rï¿½sultats obtenus.
 	*/
+<<<<<<< HEAD
+
+/*
+4.1 Quel est le meilleur coup ï¿½ jouer et le gain espï¿½rï¿½ pour une profondeur dï¿½analyse de 1, 2, 3, 4 , 5 , 6 , 7, 8, 9
+Expliquer les rï¿½sultats obtenus pour 9 (toute la grille remplie).
+Au dessus de 7, error out of stack (le programme n'a pas assez de mï¿½moire)
+=======
 	
 /*
 4.1 Quel est le meilleur coup à jouer et le gain espéré pour une profondeur d’analyse de 1, 2, 3, 4 , 5 , 6 , 7, 8, 9
 Expliquer les résultats obtenus pour 9 (toute la grille remplie).
 Au dessus de 7, error out of stack (le programme n'a pas assez de mémoire)
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 
 
 8 ?- main(B,V,7).
@@ -206,7 +231,14 @@ V = 4 .
 B = rien,
 V = 0 */
 
+<<<<<<< HEAD
+/*4.2 Comment ne pas dï¿½velopper inutilement des situations symï¿½triques de situations dï¿½jï¿½ dï¿½veloppï¿½es ?*/
+
+/*4.3 Que faut-il reprendre pour passer au jeu du puissance 4 ?*/
+/*il faut modifier successeur pour restreindre les coups suivants possibles ï¿½ jouer*/
+=======
 /*4.2 Comment ne pas développer inutilement des situations symétriques de situations déjà développées ?*/
 	
 /*4.3 Que faut-il reprendre pour passer au jeu du puissance 4 ?*/
 /*il faut modifier successeur pour restreindre les coups suivants possibles à jouer*/
+>>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
