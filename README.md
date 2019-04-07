@@ -1,3 +1,5 @@
+# Rapport TP Intelligence Artificielle
+Maxence Hanin & Maxime Arens
 # TP1 : A*
 tom.portoleau@laas.fr
 rbailonr@laas.fr
@@ -270,12 +272,17 @@ avec A le nombre d'actions pour l'heuristique 2
 D'après les résultats obtenues pour le taquin 3*3, on peut dire que l'heuristique1 fonctionnera bien sur du 4*4 pour ce qui est de l'heuristique2 on peut imaginer que certaines situations initales pourrait entrainer un temps de calculs plus long  mais que toute longeur de séquence pourra tout de même être résolue.
 
 ** A* trouve-t-il la solution pour la situation initiale suivante : **
+```pl
+initial_state([ [a, b, c],
+                [g,vide,d],
+                [h, f, e]  ]).
+```
+Non et c'est normal car il n'y a pas de solutions.
 
 ** Extension de l'A* au problème du Rubik's Cube**
-Pour représenter le problème du Rubik's Cube nous représenterions les 6 faces par 6 matrices ou chaque couleur serait représenté par une lettre. Les actions possibles se serait de tourner une colonne ou une ligne. Cela résulterais en la modification d'une ligne ou d'une colonne de 4 matrices et la rotation de deux autres.
-```pl
 
-```
+Pour représenter le problème du Rubik's Cube nous représenterions les 6 faces par 6 matrices ou chaque couleur serait représenté par une lettre. Les actions possibles se serait de tourner une colonne ou une ligne. Cela résulterais en la modification d'une ligne ou d'une colonne de 4 matrices et la rotation de deux autres.
+
 # TP2 :  Algo MinMax
 ## Familiarisation avec le problème du TicTacToe3*3
  **Question 1.2 : sens des requêtes suivantes**
@@ -414,10 +421,10 @@ negamax(J, S, P, Pmax, [rien, H]):-
 	ground(S).	/*ground -> pas de var libre -> J ne peux pas jouer*/
 
 =======
-negamax(J, S, P, Pmax, [rien, H]):-	
+negamax(J, S, P, Pmax, [rien, H]):-
 	heuristique(J,S,H),
 	ground(S).	/*ground -> pas de var libre -> J ne peux pas jouer*/
-	
+
 >>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 /*3 la profondeur maxi n'est pas atteinte et J peut encore
 jouer*/
@@ -444,7 +451,7 @@ loop_negamax(J,P,Pmax,[[Coup,Suiv]|Succ],[[Coup,Vsuiv]|Reste_Couples]) :-
 <<<<<<< HEAD
 
 =======
-	
+
 >>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 	meilleur([[Cx,Vx]|L],[Bestc,Bestv]):-
 	L \= [],
@@ -470,11 +477,11 @@ Cest le prédicat "successeurs"
 =======
 tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée ?
 ```pl
-Cest le prédicat "successeurs" 
+Cest le prédicat "successeurs"
 ```
 ** Tester ce prédicat en déterminant la liste des couples [Coup, Situation Resultante] pour le joueur X dans la situation initiale.
 ```pl
-test_succ(J,S,Succ) :- 
+test_succ(J,S,Succ) :-
 	joueur_initial(J),
 	sit3(S),
 	successeurs(J,S,Succ).
@@ -514,7 +521,7 @@ B = rien,
 V = 0
 ```
 ** Comment ne pas développer inutilement des situations symétriques de situations déjà développées ?
-	
+
 ** Que faut-il reprendre pour passer au jeu du puissance 4 ?
 ```pl
 Il faut modifier successeur pour restreindre les coups suivants possibles à jouer.
