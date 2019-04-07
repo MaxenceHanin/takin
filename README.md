@@ -504,55 +504,6 @@ V = 4 .
 B = rien,
 V = 0
 ```
-** Comment ne pas développer inutilement des situations symétriques de situations déjà développées ?
-
-** Que faut-il reprendre pour passer au jeu du puissance 4 ?
-```pl
-Il faut modifier successeur pour restreindre les coups suivants possibles à jouer.
-En effet au puissance 4, on ne peut mettre des jetons que de haut en bas, et le jeton est positionné au plus bas possible
-```
-
-** Tester ce prédicat en déterminant la liste des couples [Coup, Situation Resultante] pour le joueur X dans la situation initiale.**
-```pl
-test_succ(J,S,Succ) :-
-	joueur_initial(J),
-	sit3(S),
-	successeurs(J,S,Succ).
-```
-
-** Quel est le meilleur coup à jouer et le gain espéré pour une profondeur d’analyse de 1, 2, 3, 4 , 5 , 6 , 7, 8, 9 ?
-Expliquer les résultats obtenus pour 9 (toute la grille remplie).**
-```pl
-Au dessus de 7, "ERROR: Out of local stack" : le programme n'a pas assez de mémoire, les calculs sont trop longs
-
-8 ?- main(B,V,7).
-B = [2, 2],
-V = 1 .
-
-9 ?- main(B,V,6).
-B = [2, 2],
-V = 3 .
-
-10 ?- main(B,V,5).
-B = [2, 2],
-V = 1 .
-
-11 ?- main(B,V,4).
-B = [2, 2],
-V = 3 .
-
-12 ?- main(B,V,3).
-B = [2, 2],
-V = 1 .
-
-13 ?- main(B,V,2).
-B = [2, 2],
-V = 4 .
-
-14 ?- main(B,V,1).
-B = rien,
-V = 0
-```
 
 ** Que faut-il reprendre pour passer au jeu du puissance 4 ?**
 
