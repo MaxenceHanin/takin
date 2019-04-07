@@ -1,4 +1,4 @@
-:- lib(listut). 
+/*:- lib(listut). */
 :- use_module(library(clpfd)).
 	/*********************************
 	DESCRIPTION DU JEU DU TIC-TAC-TOE
@@ -60,13 +60,22 @@ alignement(L, Matrix) :- ligne(    L,Matrix).
 alignement(C, Matrix) :- colonne(  C,Matrix).
 alignement(D, Matrix) :- diagonale(D,Matrix).
 
+/***************************
+ TEST SOUS FONCTIONS
+ ***************************/
+
+test_ali(L,M) :- findall(L,alignement(L,M),List), sit2(M).
+test_lig(L,M) :- findall(L,ligne(L,M),List), sit2(M).
+test_col(L,M) :- findall(L,colonne(L,M),List), sit2(M).
+test_diag(L,M) :- findall(L,diagonale(L,M),List), sit2(M).
+
 	/********************************************
 	 DEFINIR ICI chaque type d'alignement maximal 
  	 existant dans une matrice carree NxN.
 	 ********************************************/
 
 ligne(L, M) :-
-	nth1(X,M,L).
+	member(L,M).
 	
  
 colonne(C,M) :-
@@ -189,8 +198,14 @@ heuristique(J,Situation,H) :-		% cas 2
 
 % A FAIRE 					cas 3
 heuristique(J,Situation,H) :-
-findall(Alig, (possible(alignement(Ali, Situation),J), Alig is alignement(Ali, Situation)),Res),
+findall(Ali, (alignement(Ali,Situation),possible(Ali,J)),L1),
 adversaire(J,A),
-findall(Alig2, (possible(alignement(Ali2, Situation),A), Alig2 is alignement(Ali2, Situation)),Res2),
-length(Res,H).
+length(L1,N1),
+findall(Ali, (alignement(Ali,Situation),possible(Ali,A)),L2),
+length(L2,N2),
+H is (N1-N2).
+
+% TEST HEURISTIQUE
+sit1([[A,x,B],[C,x,o],[o,D,E]]).
+sit2([[a,b,c],[d,e,f],[g,h,i]]).
 
