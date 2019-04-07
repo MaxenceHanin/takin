@@ -414,8 +414,9 @@ main(B,V,Pmax) :-
 ```
 ** Quel prédicat permet de connaître sous forme de liste l’ensemble des couples [Coord, Situation_Resultante]
 tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée ?
+```pl
 Cest le prédicat "successeurs" 
-
+```
 ** Tester ce prédicat en déterminant la liste des couples [Coup, Situation Resultante] pour le joueur X dans la situation initiale.
 ```pl
 test_succ(J,S,Succ) :- 
@@ -460,7 +461,9 @@ V = 0
 ** Comment ne pas développer inutilement des situations symétriques de situations déjà développées ?
 	
 ** Que faut-il reprendre pour passer au jeu du puissance 4 ?
-il faut modifier successeur pour restreindre les coups suivants possibles à jouer, en effet on ne peut mettre des jetons que de haut en bas, et le jeton est positionné au plus bas possible
+```pl
+Il faut modifier successeur pour restreindre les coups suivants possibles à jouer, en effet on ne peut mettre des jetons que de haut en bas, et le jeton est positionné au plus bas possible
+```
 
 **Comment améliorer l’algorithme en élaguant certains coups inutiles (recherche Alpha-Beta) ?
 ```pl
