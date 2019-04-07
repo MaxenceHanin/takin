@@ -69,7 +69,7 @@ A FAIRE : ECRIRE ici les clauses de negamax/5
 	/*3 la profondeur maxi n'est pas atteinte et J peut encore
 	jouer*/
 	negamax(J, S, P, Pmax, [C1,V2]):-
-		successeurs(J,S,Succ), not ground(S),
+		successeurs(J,S,Succ), not(ground(S)),
 		loop_negamax(J,P,Pmax,Succ,L),
 		meilleur(L,[C1,V1]),
 		V2 is -V1.
@@ -138,10 +138,12 @@ A FAIRE : ECRIRE ici les clauses de meilleur
 	/*le meilleur dans une liste a un seul element est cet element*/
 	meilleur([Elem],Elem).
 	
-	meilleur([[_,Vx]|L],M):-
-	M = [_,Vy],
-	meilleur(L,M),Vx>=Vy.
-	meilleur(H|_],H).
+	meilleur([[Cx,Vx]|L],[Bestc,Bestv]):-
+	L \= [],
+	meilleur(L,[Cy,Vy]),
+	((Vy < Vx)->
+	/*entre X et Y on garde celui qui a la petite valeur de V*/
+			[Bestc,Bestv]=[Cy,Vy]; [Bestc,Bestv]=[Cx,Vx]).
 	
 	/*Cest le prédicat "successeurs" qui permet de connaître sous forme de liste l’ensemble des couples [Coord, Situation_Resultante]
 tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée.*/
@@ -155,23 +157,10 @@ test_succ(J,S,Succ) :-
 	/******************
   	PROGRAMME PRINCIPAL
   	*******************/
-
-		
-	display([[A,B,C],[D,E,F],[G,H,I]]) :-
-	 writeln('-----------'),
-	 write('|'), write(A), write(' | '), write(B), write(' | '), write(C), writeln('|'),
-	 writeln('-----------'),
-	 write('|'), write(D), write(' | '), write(E), write(' | '), write(F), writeln('|'),
-	 writeln('-----------'),
-	 write('|'), write(G), write(' | '), write(H), write(' | '), write(I), writeln('|'),
- 	 writeln('-----------').
 		
 main(B,V,Pmax) :-
 	adversaire(J,A),
 	joueur_initial(J),
-	%win(S),
-	%loose(S),
-	%nul(S),
 	situation_initiale(S),
 	negamax(J, S, 1, Pmax, [B, V]).
 	
@@ -182,9 +171,42 @@ A FAIRE :
 	Pmax = 1, 2, 3, 4 ...
 	Commentez les résultats obtenus.
 	*/
-test_disp(S):-
-	sit2(S),
-	display(S).
+	
+/*
+4.1 Quel est le meilleur coup à jouer et le gain espéré pour une profondeur d’analyse de 1, 2, 3, 4 , 5 , 6 , 7, 8, 9
+Expliquer les résultats obtenus pour 9 (toute la grille remplie).
+Au dessus de 7, error out of stack (le programme n'a pas assez de mémoire)
+
+
+8 ?- main(B,V,7).
+B = [2, 2],
+V = 1 .
+
+9 ?- main(B,V,6).
+B = [2, 2],
+V = 3 .
+
+10 ?- main(B,V,5).
+B = [2, 2],
+V = 1 .
+
+11 ?- main(B,V,4).
+B = [2, 2],
+V = 3 .
+
+12 ?- main(B,V,3).
+B = [2, 2],
+V = 1 .
+
+13 ?- main(B,V,2).
+B = [2, 2],
+V = 4 .
+
+14 ?- main(B,V,1).
+B = rien,
+V = 0 */
+
+/*4.2 Comment ne pas développer inutilement des situations symétriques de situations déjà développées ?*/
 	
 /*4.3 Que faut-il reprendre pour passer au jeu du puissance 4 ?*/
 /*il faut modifier successeur pour restreindre les coups suivants possibles à jouer*/
