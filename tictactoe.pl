@@ -11,20 +11,20 @@
 	Contrairement a la convention du tp pr�c�dent, pour mod�liser une case libre
 	dans une matrice on n'utilise pas une constante sp�ciale (ex : nil, 'vide', 'libre','inoccupee' ...);
 	On utilise plut�t une variable libre (_), c'est�-dire un terme non instanci� ('_').
-	La situation initiale est donc une matrice 3x3 composee uniquement de variables libres (_). 
+	La situation initiale est donc une matrice 3x3 composee uniquement de variables libres (_).
 	Ceci est possible car le jeu consiste � instancier la grille avec des symboles et non � d�placer les symbles d�j� affect�s.
-	
-	
-	
-	Jouer un coup, c-a-d placer un symbole dans une grille S1 ne consiste pas � g�n�rer une nouvelle grille S2 obtenue 
+
+
+
+	Jouer un coup, c-a-d placer un symbole dans une grille S1 ne consiste pas � g�n�rer une nouvelle grille S2 obtenue
 	en copiant d'abord S1 puis en remplacant le symbole de case libre par le symbole du joueur, mais plus simplement
 	� INSTANCIER (au sens Prolog) la variable libre qui repr�sentait la case libre par la valeur associ�e au joueur, ex :
 	Case = Joueur, ou a realiser indirectement cette instanciation par unification via un pr�dicat comme member/2, select/3, nth1/3 ...
-	
+
 	Ainsi si on joue un coup en S, S perd une variable libre, mais peut continuer � s'appeler S (on n a pas besoin de la d�signer
 	par un nouvel identificateur).
 	La situation initiale est une "matrice" 3x3 (liste de 3 listes de 3 termes chacune)
-	o� chacun des 9 termes est une variable libre.	
+	o� chacun des 9 termes est une variable libre.
 	*/
 
 situation_initiale([ [_,_,_],
@@ -78,18 +78,18 @@ test_col(L,M) :- sit2(M),colonne(L,M).
 test_diag(L,M) :- sit2(M), diagonale(L,M).
 
 	/********************************************
-	 DEFINIR ICI chaque type d'alignement maximal 
+	 DEFINIR ICI chaque type d'alignement maximal
  	 existant dans une matrice carree NxN.
 	 ********************************************/
 
 ligne(L, M) :-
 	member(L,M).
-	
- 
+
+
 colonne(C,M) :-
 	transp(M,Mt),
 	ligne(C,Mt).
-	
+
 
 	/* Definition de la relation liant une diagonale D � la matrice M dans laquelle elle se trouve.
 		il y en a 2 sortes de diagonales dans une matrice carree(https://fr.wikipedia.org/wiki/Diagonale) :
@@ -100,12 +100,12 @@ colonne(C,M) :-
 		. . \ . . . / . .
 		. . . \ . / . . .
 		. . . . X . . .
-		. . . / . \ . . . 
+		. . . / . \ . . .
 		. . / . . . \ . .
 		. / . . . . . \ .
 		R . . . . . . . I
 	*/
-		
+
 diagonale(D, M) :- premiere_diag(1,D,M); seconde_diag(1,D,M).
 
 premiere_diag(_,[],[]).
@@ -132,7 +132,7 @@ seconde_diag(K,[E|D],[Ligne|M]) :-
 possible([X|L], J) :- unifiable(X,J), possible(L,J).
 possible([   ], _).
 
-	/* Attention 
+	/* Attention
 	il faut juste verifier le caractere unifiable
 	de chaque emplacement de la liste, mais il ne
 	faut pas realiser l'unification.
@@ -140,8 +140,8 @@ possible([   ], _).
 
 unifiable(X,J) :-
 	var(X); X==J.
-	
-	
+
+
 	/**********************************
 	 DEFINITION D'UN ALIGNEMENT GAGNANT
 	 OU PERDANT POUR UN JOUEUR DONNE J
@@ -159,7 +159,7 @@ alignement_gagnant([X|L], J) :-
 	X==J,
 	alignement_gagnant(L, J).
 
-alignement_perdant(Ali, J) :- 
+alignement_perdant(Ali, J) :-
 	adversaire(J,A),
 	alignement_gagnant(Ali,A).
 
@@ -170,11 +170,11 @@ alignement_perdant(Ali, J) :-
 
      /*Il faut definir quelle op�ration subit une matrice M representant la situation courante
 	lorsqu'un joueur J joue en coordonnees [L,C]
-     */	
+     */
 
 successeur(J,Etat,[L,C]) :-
 	nth1(L,Etat,Lig), nth1(C,Lig,J).
-	
+
 
 	/**************************************
    	 EVALUATION HEURISTIQUE D'UNE SITUATION
@@ -194,11 +194,11 @@ heuristique(J,Situation,H) :-		% cas 1
    H = 10000,				% grand nombre approximant +infini
    alignement(Alig,Situation),
    alignement_gagnant(Alig,J), !.
-	
+
 heuristique(J,Situation,H) :-		% cas 2
    H = -10000,				% grand nombre approximant -infini
    alignement(Alig,Situation),
-   alignement_perdant(Alig,J),!.	
+   alignement_perdant(Alig,J),!.
 
 
 % on ne vient ici que si les cut precedents n'ont pas fonctionne,
@@ -214,9 +214,8 @@ length(L2,N2),
 H is (N1-N2).
 
 % TEST
-test_heur_init(J,S,H) :- sit_init(S),heuristique(J,S,H).
+test_heur_init(J,S,H) :- situation_initiale(S),heuristique(J,S,H).
 test_heur(J,S,H) :- sit3(S),heuristique(J,S,H).
 test_heur_win(J,S,H) :- win(S),heuristique(J,S,H).
 test_heur_loose(J,S,H) :- loose(S),heuristique(J,S,H).
 test_heur_nul(J,S,H) :- nul(S),heuristique(J,S,H).
-
