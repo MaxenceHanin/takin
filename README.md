@@ -415,17 +415,10 @@ negamax(J, S, Pmax, Pmax, [rien, H]):-
 
 /* 2 la profondeur maximale n'est pas  atteinte mais J ne
 peut pas jouer*/
-<<<<<<< HEAD
 negamax(J, S, P, Pmax, [rien, H]):-
 	heuristique(J,S,H),
 	ground(S).	/*ground -> pas de var libre -> J ne peux pas jouer*/
 
-=======
-negamax(J, S, P, Pmax, [rien, H]):-
-	heuristique(J,S,H),
-	ground(S).	/*ground -> pas de var libre -> J ne peux pas jouer*/
-
->>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 /*3 la profondeur maxi n'est pas atteinte et J peut encore
 jouer*/
 negamax(J, S, P, Pmax, [C1,V2]):-
@@ -448,11 +441,7 @@ loop_negamax(J,P,Pmax,[[Coup,Suiv]|Succ],[[Coup,Vsuiv]|Reste_Couples]) :-
 ```pl
 /*le meilleur dans une liste a un seul element est cet element*/
 	meilleur([Elem],Elem).
-<<<<<<< HEAD
-
-=======
-
->>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
+	
 	meilleur([[Cx,Vx]|L],[Bestc,Bestv]):-
 	L \= [],
 	meilleur(L,[Cy,Vy]),
@@ -470,12 +459,7 @@ main(B,V,Pmax) :-
 	negamax(J, S, 1, Pmax, [B, V]).
 ```
 ** Quel prédicat permet de connaître sous forme de liste l’ensemble des couples [Coord, Situation_Resultante]
-<<<<<<< HEAD
 tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée ?**
-```pl
-Cest le prédicat "successeurs"
-=======
-tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée ?
 ```pl
 Cest le prédicat "successeurs"
 ```
@@ -528,27 +512,17 @@ Il faut modifier successeur pour restreindre les coups suivants possibles à jou
 En effet au puissance 4, on ne peut mettre des jetons que de haut en bas, et le jeton est positionné au plus bas possible
 ```
 
-**Comment améliorer l’algorithme en élaguant certains coups inutiles (recherche Alpha-Beta) ?
-```pl
-
->>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
-```
 ** Tester ce prédicat en déterminant la liste des couples [Coup, Situation Resultante] pour le joueur X dans la situation initiale.**
 ```pl
-<<<<<<< HEAD
 test_succ(J,S,Succ) :-
 	joueur_initial(J),
 	sit3(S),
 	successeurs(J,S,Succ).
-=======
-
->>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 ```
 
 ** Quel est le meilleur coup à jouer et le gain espéré pour une profondeur d’analyse de 1, 2, 3, 4 , 5 , 6 , 7, 8, 9 ?
 Expliquer les résultats obtenus pour 9 (toute la grille remplie).**
 ```pl
-<<<<<<< HEAD
 Au dessus de 7, "ERROR: Out of local stack" : le programme n'a pas assez de mémoire, les calculs sont trop longs
 
 8 ?- main(B,V,7).
@@ -578,9 +552,6 @@ V = 4 .
 14 ?- main(B,V,1).
 B = rien,
 V = 0
-=======
-
->>>>>>> 4246bc937f3e9b16f4dd22e2f5b37e45efaa756f
 ```
 
 ** Que faut-il reprendre pour passer au jeu du puissance 4 ?**
