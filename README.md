@@ -359,9 +359,116 @@ test_heur_nul(o,S,H). %idem avec x
 ```
 Le prédicat heuristique fonctionne pour tout les cas sauf pour la situation initiale avec le plateau vide.
 
+## Implémentation de negamax
+### Les clauses de negamax
+
 ```pl
+/* 1 la profondeur maximale est atteinte */
+negamax(J, S, Pmax, Pmax, [rien, H]):-
+	heuristique(J,S,H).
+
+/* 2 la profondeur maximale n'est pas  atteinte mais J ne
+peut pas jouer*/
+negamax(J, S, P, Pmax, [rien, H]):-	
+	heuristique(J,S,H),
+	ground(S).	/*ground -> pas de var libre -> J ne peux pas jouer*/
+	
+/*3 la profondeur maxi n'est pas atteinte et J peut encore
+jouer*/
+negamax(J, S, P, Pmax, [C1,V2]):-
+	successeurs(J,S,Succ), not(ground(S)),
+	loop_negamax(J,P,Pmax,Succ,L),
+	meilleur(L,[C1,V1]),
+	V2 is -V1.
+```
+
+### Le prédicat loop_negamax commenté
+```pl
+loop_negamax(_,_, _  ,[],                []).
+loop_negamax(J,P,Pmax,[[Coup,Suiv]|Succ],[[Coup,Vsuiv]|Reste_Couples]) :-
+	loop_negamax(J,P,Pmax,Succ,Reste_Couples), /*boucle jusqu'à la fin de Succ*/
+	adversaire(J,A), /*définie A comme l'adversaire de J*/
+	Pnew is P+1, /*incrémmente la profondeur P */
+	negamax(A,Suiv,Pnew,Pmax, [_,Vsuiv]). /*applique l'algo negamax sur les elements contenus ds Succ, et avec [_,Vsuiv] on récupère leur valeur*/
+```
+### Le prédicat meilleur
+```pl
+/*le meilleur dans une liste a un seul element est cet element*/
+	meilleur([Elem],Elem).
+	
+	meilleur([[Cx,Vx]|L],[Bestc,Bestv]):-
+	L \= [],
+	meilleur(L,[Cy,Vy]),
+	((Vy < Vx)->
+	/*entre X et Y on garde celui qui a la petite valeur de V*/
+			[Bestc,Bestv]=[Cy,Vy]; [Bestc,Bestv]=[Cx,Vx]).
+```
+
+### Le prédicat main
+```pl
+main(B,V,Pmax) :-
+	adversaire(J,A),
+	joueur_initial(J),
+	situation_initiale(S),
+	negamax(J, S, 1, Pmax, [B, V]).
+```
+** Quel prédicat permet de connaître sous forme de liste l’ensemble des couples [Coord, Situation_Resultante]
+tels que chaque élément (couple) associe le coup d’un joueur et la situation qui en résulte à partir d’une situation donnée ?
+Cest le prédicat "successeurs" 
+
+** Tester ce prédicat en déterminant la liste des couples [Coup, Situation Resultante] pour le joueur X dans la situation initiale.
+```pl
+test_succ(J,S,Succ) :- 
+	joueur_initial(J),
+	sit3(S),
+	successeurs(J,S,Succ).
+```
+
+** Quel est le meilleur coup à jouer et le gain espéré pour une profondeur d’analyse de 1, 2, 3, 4 , 5 , 6 , 7, 8, 9 ?
+Expliquer les résultats obtenus pour 9 (toute la grille remplie).
+```pl
+Au dessus de 7, "ERROR: Out of local stack" : le programme n'a pas assez de mémoire, les calculs sont trop longs
+
+8 ?- main(B,V,7).
+B = [2, 2],
+V = 1 .
+
+9 ?- main(B,V,6).
+B = [2, 2],
+V = 3 .
+
+10 ?- main(B,V,5).
+B = [2, 2],
+V = 1 .
+
+11 ?- main(B,V,4).
+B = [2, 2],
+V = 3 .
+
+12 ?- main(B,V,3).
+B = [2, 2],
+V = 1 .
+
+13 ?- main(B,V,2).
+B = [2, 2],
+V = 4 .
+
+14 ?- main(B,V,1).
+B = rien,
+V = 0
+```
+** Comment ne pas développer inutilement des situations symétriques de situations déjà développées ?
+	
+** Que faut-il reprendre pour passer au jeu du puissance 4 ?
+il faut modifier successeur pour restreindre les coups suivants possibles à jouer, en effet on ne peut mettre des jetons que de haut en bas, et le jeton est positionné au plus bas possible
+
+**Comment améliorer l’algorithme en élaguant certains coups inutiles (recherche Alpha-Beta) ?
+```pl
+
 ```
 ```pl
+
 ```
 ```pl
+
 ```
