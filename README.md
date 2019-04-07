@@ -462,7 +462,8 @@ V = 0
 	
 ** Que faut-il reprendre pour passer au jeu du puissance 4 ?
 ```pl
-Il faut modifier successeur pour restreindre les coups suivants possibles à jouer, en effet on ne peut mettre des jetons que de haut en bas, et le jeton est positionné au plus bas possible
+Il faut modifier successeur pour restreindre les coups suivants possibles à jouer.
+En effet au puissance 4, on ne peut mettre des jetons que de haut en bas, et le jeton est positionné au plus bas possible
 ```
 
 **Comment améliorer l’algorithme en élaguant certains coups inutiles (recherche Alpha-Beta) ?
